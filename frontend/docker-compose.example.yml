@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────
+# Пример добавления gym-frontend в общий docker-compose.yml
+# Скопируй этот сервис в docker-compose.yml бэкенда
+# ─────────────────────────────────────────────────────────────
+version: '3.9'
+
+services:
+  # ─── Frontend ──────────────────────────────────────────────
+  gym-frontend:
+    build:
+      context: ./gym-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - gym-service
+    networks:
+      - gym-network
+    restart: unless-stopped
+
+  # ─── Ниже — примеры сервисов бэкенда (добавь свои) ────────
+  # auth-service:
+  #   build: ./auth-service
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - DATABASE_URL=postgresql://user:pass@postgres:5432/gymdb
+  #     - JWT_SECRET=your-secret-key
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - gym-network
+
+  # gym-service:
+  #   build: ./gym-service
+  #   ports:
+  #     - "3002:3002"
+  #   environment:
+  #     - DATABASE_URL=postgresql://user:pass@postgres:5432/gymdb
+  #     - JWT_SECRET=your-secret-key
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - gym-network
+
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: pass
+  #     POSTGRES_DB: gymdb
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - gym-network
+
+networks:
+  gym-network:
+    driver: bridge
+
+# volumes:
+#   postgres_data:

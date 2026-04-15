@@ -1,0 +1,19 @@
+# Добавьте в docker-compose.yml основного проекта:
+
+  gym-frontend:
+    build:
+      context: ./gym-frontend
+      dockerfile: Dockerfile
+    container_name: gym-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - gym-service
+    restart: unless-stopped
+    # Если используется сеть
+    networks:
+      - gym-network
+
+# Убедитесь, что сервисы называются именно auth-service и gym-service
+# (как указано в nginx.conf в proxy_pass)
