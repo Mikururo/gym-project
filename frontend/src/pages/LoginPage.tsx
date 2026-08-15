@@ -69,7 +69,7 @@ export const LoginPage = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@gym.ru"
+                  placeholder="admin@example.com"
                   className="border-slate-600 bg-slate-700 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                   {...register('email')}
                 />

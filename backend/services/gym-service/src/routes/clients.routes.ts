@@ -116,7 +116,7 @@ router.get('/:id', getClient);
  *             $ref: '#/components/schemas/ClientInput'
  *           example:
  *             name: Иван Иванов
- *             email: ivan@mail.ru
+ *             email: ivan@example.com
  *             phone: +79001234567
  *             birth_date: 1998-05-10
  *             photo_url: https://example.com/ivan.jpg
@@ -166,7 +166,7 @@ router.post('/', createClientController);
  *             $ref: '#/components/schemas/ClientInput'
  *           example:
  *             name: Иван Иванов
- *             email: ivan_new@mail.ru
+ *             email: ivan.new@example.com
  *             phone: +79009999999
  *             birth_date: 1998-05-10
  *             photo_url: https://example.com/ivan-new.jpg

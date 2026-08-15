@@ -29,7 +29,7 @@ const options: swaggerJSDoc.Options = {
           required: ['id', 'email', 'name', 'role', 'created_at'],
           properties: {
             id: { type: 'integer', example: 1 },
-            email: { type: 'string', example: 'admin@gym.ru' },
+            email: { type: 'string', example: 'admin@example.com' },
             name: { type: 'string', example: 'Администратор' },
             role: { type: 'string', enum: ['admin', 'trainer'], example: 'admin' },
             created_at: { type: 'string', format: 'date-time', example: '2026-04-02T09:00:00.000Z' },
@@ -45,20 +45,19 @@ const options: swaggerJSDoc.Options = {
         },
         RegisterRequest: {
           type: 'object',
-          required: ['email', 'password', 'name', 'role'],
+          required: ['email', 'password', 'name'],
           properties: {
-            email: { type: 'string', example: 'trainer@gym.ru' },
-            password: { type: 'string', example: 'password123' },
-            name: { type: 'string', example: 'Иван Петров' },
-            role: { type: 'string', enum: ['admin', 'trainer'], example: 'trainer' },
+            email: { type: 'string', example: 'trainer@example.com' },
+            password: { type: 'string', example: 'change-me' },
+            name: { type: 'string', example: 'Demo Trainer' },
           },
         },
         LoginRequest: {
           type: 'object',
           required: ['email', 'password'],
           properties: {
-            email: { type: 'string', example: 'admin@gym.ru' },
-            password: { type: 'string', example: 'password123' },
+            email: { type: 'string', example: 'admin@example.com' },
+            password: { type: 'string', example: 'change-me' },
           },
         },
         RefreshRequest: {

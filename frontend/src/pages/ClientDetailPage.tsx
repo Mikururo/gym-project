@@ -6,9 +6,6 @@ import { useClient, useDeleteClient } from '@/hooks/useClients'
 import { useVisits, useCreateVisit } from '@/hooks/useVisits'
 import { useSubscriptions } from '@/hooks/useSubscriptions'
 import { useAuth } from '@/hooks/useAuth'
-import { useClients } from '@/hooks/useClients'
-import { useQuery } from '@tanstack/react-query'
-import { getUsers } from '@/api/auth.api'
 import { UserRole, SubscriptionType } from '@/types/shared'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,7 +13,6 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog'
@@ -38,7 +34,6 @@ export const ClientDetailPage = () => {
   const { hasRole } = useAuth()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [visitDialogOpen, setVisitDialogOpen] = useState(false)
-  const [selectedTrainerId, setSelectedTrainerId] = useState('')
   const [visitDate, setVisitDate] = useState(new Date().toISOString().slice(0, 16))
   const [visitNotes, setVisitNotes] = useState('')
 
@@ -47,13 +42,8 @@ export const ClientDetailPage = () => {
   const { data: subscriptions } = useSubscriptions()
   const { mutate: deleteClient, isPending: isDeleting } = useDeleteClient()
   const { mutateAsync: createVisit, isPending: isCreatingVisit } = useCreateVisit()
-  const { data: usersData } = useQuery({ queryKey: ['users'], queryFn: getUsers })
 
   const canEdit = hasRole([UserRole.ADMIN, UserRole.TRAINER])
-  const trainers = usersData?.data.filter(
-    u => u.role === UserRole.TRAINER || u.role === UserRole.ADMIN
-  )
-
   const clientSubscriptions = subscriptions?.filter(s => s.clientId === id) ?? []
   const activeSub = client?.activeSubscription
   const daysLeft = activeSub ? getDaysLeft(activeSub.endDate) : null
@@ -84,13 +74,11 @@ export const ClientDetailPage = () => {
     if (!id) return
     await createVisit({
       clientId: id,
-      trainerId: selectedTrainerId || undefined,
       visitDate,
       notes: visitNotes || undefined,
     })
     setVisitDialogOpen(false)
     setVisitNotes('')
-    setSelectedTrainerId('')
   }
 
   if (isLoading) return <PageLoader />
@@ -258,11 +246,6 @@ export const ClientDetailPage = () => {
                   <CheckSquare className="h-4 w-4 text-green-600 shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm font-medium">{formatDateTime(visit.visitDate)}</p>
-                    {visit.trainer && (
-                      <p className="text-xs text-muted-foreground">
-                        Тренер: {fullName(visit.trainer)}
-                      </p>
-                    )}
                     {visit.notes && (
                       <p className="text-xs text-muted-foreground italic">{visit.notes}</p>
                     )}
@@ -292,18 +275,6 @@ export const ClientDetailPage = () => {
                 value={visitDate}
                 onChange={e => setVisitDate(e.target.value)}
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Тренер (необязательно)</Label>
-              <Select onValueChange={v => setSelectedTrainerId(v === 'none' ? '' : v)}>
-                <SelectTrigger><SelectValue placeholder="Без тренера" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Без тренера</SelectItem>
-                  {trainers?.map(t => (
-                    <SelectItem key={t.id} value={t.id}>{fullName(t)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
             <div className="space-y-2">
               <Label>Заметки</Label>

@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+import { UserRole } from '../../../../shared/types';
+import { requireRole } from '../middlewares/auth.middleware';
+
 import {
   createVisitController,
   deleteVisitController,
@@ -136,7 +139,7 @@ router.post('/', createVisitController);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', deleteVisitController);
+router.delete('/:id', requireRole(UserRole.ADMIN), deleteVisitController);
 
 /**
  * @swagger

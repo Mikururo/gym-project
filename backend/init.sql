@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(50) NOT NULL DEFAULT 'admin' CHECK (role IN ('admin', 'trainer')),
+  role VARCHAR(50) NOT NULL DEFAULT 'trainer' CHECK (role IN ('admin', 'trainer')),
   name VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT NOW(),
   refresh_token TEXT

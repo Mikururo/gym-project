@@ -41,10 +41,6 @@ const throwHttpError = (message: string, statusCode: number): never => {
 
 const normalizeEmail = (email: string): string => email.trim().toLowerCase();
 
-const isValidRole = (role: string): role is UserRole => {
-  return Object.values(UserRole).includes(role as UserRole);
-};
-
 const toIsoString = (value: Date | string): string => {
   return value instanceof Date
     ? value.toISOString()
@@ -87,14 +83,10 @@ export const registerUser = async (
   const email: string = normalizeEmail(payload.email);
   const password: string = payload.password.trim();
   const name: string = payload.name.trim();
-  const role: string = payload.role;
+  const role: UserRole = UserRole.TRAINER;
 
-  if (!email || !password || !name || !role) {
-    throwHttpError("Email, password, name and role are required", 400);
-  }
-
-  if (!isValidRole(role)) {
-    throwHttpError("Role must be admin or trainer", 400);
+  if (!email || !password || !name) {
+    throwHttpError("Email, password and name are required", 400);
   }
 
   const existingUser = await query<DbUserRow>(
@@ -136,6 +128,36 @@ export const registerUser = async (
     ...tokens,
     user: mapUser(userRow),
   };
+};
+
+export const ensureBootstrapAdmin = async (): Promise<void> => {
+  const email: string = normalizeEmail(process.env.BOOTSTRAP_ADMIN_EMAIL ?? "");
+  const password: string = (process.env.BOOTSTRAP_ADMIN_PASSWORD ?? "").trim();
+  const name: string = (process.env.BOOTSTRAP_ADMIN_NAME ?? "Administrator").trim() || "Administrator";
+
+  if (!email || !password) {
+    return;
+  }
+
+  const existingUser = await query<DbUserRow>(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+  );
+
+  if (existingUser.rowCount && existingUser.rowCount > 0) {
+    return;
+  }
+
+  const passwordHash: string = await bcrypt.hash(password, 10);
+  await query(
+    `
+      INSERT INTO users (email, password_hash, role, name)
+      VALUES ($1, $2, $3, $4)
+    `,
+    [email, passwordHash, UserRole.ADMIN, name],
+  );
+
+  console.log("Bootstrap administrator account created");
 };
 
 export const loginUser = async (

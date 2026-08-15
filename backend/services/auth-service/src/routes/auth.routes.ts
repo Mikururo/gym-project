@@ -9,7 +9,7 @@ const router = Router();
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Регистрация пользователя
+ *     summary: Регистрация тренера
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -18,13 +18,12 @@ const router = Router();
  *           schema:
  *             $ref: '#/components/schemas/RegisterRequest'
  *           example:
- *             email: admin@gym.ru
- *             password: password123
- *             name: Администратор
- *             role: admin
+ *             email: trainer@example.com
+ *             password: change-me
+ *             name: Demo Trainer
  *     responses:
  *       201:
- *         description: Пользователь успешно зарегистрирован
+ *         description: Тренер успешно зарегистрирован
  *         content:
  *           application/json:
  *             schema:
@@ -57,8 +56,8 @@ router.post('/register', register);
  *           schema:
  *             $ref: '#/components/schemas/LoginRequest'
  *           example:
- *             email: admin@gym.ru
- *             password: password123
+ *             email: admin@example.com
+ *             password: change-me
  *     responses:
  *       200:
  *         description: Успешный вход в систему

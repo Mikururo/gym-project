@@ -224,7 +224,6 @@ export const deleteSubscription = async (id: string): Promise<void> => {
 export const getVisits = async (params: {
   clientId?: string
   date?: string
-  trainerId?: string
 }): Promise<IVisit[]> => {
   const apiParams: Record<string, string | number> = { page: 1, limit: 1000 }
   if (params.clientId) apiParams.clientId = params.clientId

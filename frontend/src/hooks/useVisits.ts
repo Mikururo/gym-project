@@ -7,7 +7,7 @@ export const VISIT_KEYS = {
   list: (params: object) => ['visits', 'list', params] as const,
 }
 
-export const useVisits = (params: { clientId?: string; date?: string; trainerId?: string } = {}) => {
+export const useVisits = (params: { clientId?: string; date?: string } = {}) => {
   return useQuery({
     queryKey: VISIT_KEYS.list(params),
     queryFn: () => gymApi.getVisits(params),

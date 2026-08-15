@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/auth.routes';
 import swaggerSpec from './swagger';
 import { connectWithRetry } from './db/database';
+import { ensureBootstrapAdmin } from './services/auth.service';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use((_req: Request, res: Response) => {
 const bootstrap = async (): Promise<void> => {
   try {
     await connectWithRetry();
+    await ensureBootstrapAdmin();
 
     app.listen(port, () => {
       console.log(`🚀 auth-service started on port ${port}`);

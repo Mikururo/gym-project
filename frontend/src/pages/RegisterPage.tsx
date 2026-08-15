@@ -9,8 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { UserRole } from '@/types/shared'
 import { useAuthStore } from '@/store/authStore'
 
 const registerSchema = z.object({
@@ -18,19 +16,12 @@ const registerSchema = z.object({
   email: z.string().email('Введите корректный email'),
   password: z.string().min(6, 'Минимум 6 символов'),
   confirmPassword: z.string().min(6, 'Минимум 6 символов'),
-  role: z.nativeEnum(UserRole),
 }).refine((data) => data.password === data.confirmPassword, {
   path: ['confirmPassword'],
   message: 'Пароли не совпадают',
 })
 
 type RegisterForm = z.infer<typeof registerSchema>
-
-const roleLabels: Record<UserRole, string> = {
-  [UserRole.ADMIN]: 'Администратор',
-  [UserRole.TRAINER]: 'Тренер',
-  [UserRole.CLIENT]: 'Клиент',
-}
 
 export const RegisterPage = () => {
   const [serverError, setServerError] = useState<string | null>(null)
@@ -41,11 +32,9 @@ export const RegisterPage = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: UserRole.TRAINER },
   })
 
   const onSubmit = async (data: RegisterForm) => {
@@ -55,7 +44,6 @@ export const RegisterPage = () => {
         email: data.email,
         password: data.password,
         name: data.name,
-        role: data.role === UserRole.CLIENT ? UserRole.TRAINER : data.role,
       })
       navigate('/dashboard')
     } catch (error: any) {
@@ -100,24 +88,10 @@ export const RegisterPage = () => {
                 <Input
                   type="email"
                   className="border-slate-600 bg-slate-700 text-white placeholder:text-slate-500"
-                  placeholder="trainer@gym.ru"
+                  placeholder="trainer@example.com"
                   {...register('email')}
                 />
                 {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-slate-200">Роль</Label>
-                <Select defaultValue={UserRole.TRAINER} onValueChange={(value) => setValue('role', value as UserRole)}>
-                  <SelectTrigger className="border-slate-600 bg-slate-700 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[UserRole.ADMIN, UserRole.TRAINER].map((role) => (
-                      <SelectItem key={role} value={role}>{roleLabels[role]}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">

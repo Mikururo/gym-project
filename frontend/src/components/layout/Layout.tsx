@@ -9,7 +9,6 @@ const pageTitles: Record<string, string> = {
   '/clients': 'Клиенты',
   '/subscriptions': 'Абонементы',
   '/visits': 'Посещения',
-  '/users': 'Пользователи',
   '/profile': 'Профиль',
 }
 

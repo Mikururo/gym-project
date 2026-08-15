@@ -1,7 +1,7 @@
 
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, Users, CreditCard, Calendar, UserCog, Settings, Dumbbell, LogOut,
+  LayoutDashboard, Users, CreditCard, Calendar, Settings, Dumbbell, LogOut,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -22,7 +22,6 @@ const navItems: NavItem[] = [
   { label: 'Клиенты', href: '/clients', icon: Users },
   { label: 'Абонементы', href: '/subscriptions', icon: CreditCard },
   { label: 'Посещения', href: '/visits', icon: Calendar },
-  { label: 'Пользователи', href: '/users', icon: UserCog, roles: [UserRole.ADMIN] },
   { label: 'Профиль', href: '/profile', icon: Settings },
 ]
 

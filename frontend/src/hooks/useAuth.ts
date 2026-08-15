@@ -7,7 +7,6 @@ export const useAuth = () => {
 
   const isAdmin = () => store.user?.role === UserRole.ADMIN
   const isTrainer = () => store.user?.role === UserRole.TRAINER
-  const isClient = () => store.user?.role === UserRole.CLIENT
   const hasRole = (roles: UserRole[]) => {
     if (!store.user) return false
     return roles.includes(store.user.role)
@@ -17,7 +16,6 @@ export const useAuth = () => {
     ...store,
     isAdmin,
     isTrainer,
-    isClient,
     hasRole,
   }
 }

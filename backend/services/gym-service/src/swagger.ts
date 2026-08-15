@@ -30,7 +30,7 @@ const options: swaggerJSDoc.Options = {
           properties: {
             id: { type: 'integer', example: 1 },
             name: { type: 'string', example: 'Иван Иванов' },
-            email: { type: 'string', nullable: true, example: 'ivan@mail.ru' },
+            email: { type: 'string', nullable: true, example: 'ivan@example.com' },
             phone: { type: 'string', nullable: true, example: '+79001234567' },
             birth_date: { type: 'string', format: 'date', nullable: true, example: '1998-05-10' },
             photo_url: { type: 'string', nullable: true, example: 'https://example.com/photo.jpg' },
@@ -43,7 +43,7 @@ const options: swaggerJSDoc.Options = {
           required: ['name'],
           properties: {
             name: { type: 'string', example: 'Иван Иванов' },
-            email: { type: 'string', example: 'ivan@mail.ru' },
+            email: { type: 'string', example: 'ivan@example.com' },
             phone: { type: 'string', example: '+79001234567' },
             birth_date: { type: 'string', format: 'date', example: '1998-05-10' },
             photo_url: { type: 'string', example: 'https://example.com/photo.jpg' },

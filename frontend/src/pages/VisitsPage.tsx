@@ -7,9 +7,6 @@ import { z } from 'zod'
 import { useVisits, useCreateVisit, useDeleteVisit } from '@/hooks/useVisits'
 import { useClients } from '@/hooks/useClients'
 import { useAuth } from '@/hooks/useAuth'
-import { getUsers } from '@/api/auth.api'
-import { useQuery } from '@tanstack/react-query'
-import { UserRole } from '@/types/shared'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,25 +21,21 @@ import { formatDateTime, getFullName, formatDate } from '@/utils/formatters'
 
 const visitSchema = z.object({
   clientId: z.string().min(1, 'Выберите клиента'),
-  trainerId: z.string().optional(),
   visitDate: z.string().min(1, 'Укажите дату'),
   notes: z.string().optional(),
 })
 type VisitFormData = z.infer<typeof visitSchema>
 
 export const VisitsPage = () => {
-  const { isAdmin, hasRole } = useAuth()
+  const { isAdmin } = useAuth()
   const [filterDate, setFilterDate] = useState('')
   const [addOpen, setAddOpen] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const { data: visits, isLoading } = useVisits({ date: filterDate || undefined })
   const { data: clients } = useClients({ limit: 999 })
-  const { data: usersData } = useQuery({ queryKey: ['users'], queryFn: getUsers })
   const { mutateAsync: createVisit, isPending: isCreating } = useCreateVisit()
   const { mutate: deleteVisit, isPending: isDeleting } = useDeleteVisit()
-
-  const trainers = usersData?.data.filter(u => u.role === UserRole.TRAINER || u.role === UserRole.ADMIN)
 
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<VisitFormData>({
     resolver: zodResolver(visitSchema),
@@ -50,7 +43,7 @@ export const VisitsPage = () => {
   })
 
   const onSubmit = async (data: VisitFormData) => {
-    await createVisit({ ...data, trainerId: data.trainerId || undefined })
+    await createVisit(data)
     reset()
     setAddOpen(false)
   }
@@ -105,17 +98,16 @@ export const VisitsPage = () => {
             <TableRow>
               <TableHead>Дата и время</TableHead>
               <TableHead>Клиент</TableHead>
-              <TableHead>Тренер</TableHead>
               <TableHead>Заметки</TableHead>
               {isAdmin() && <TableHead className="text-right">Действия</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading && Array.from({ length: 6 }).map((_, i) => (
-              <TableRow key={i}>{Array.from({ length: 5 }).map((_, j) => <TableCell key={j}><Skeleton className="h-5" /></TableCell>)}</TableRow>
+              <TableRow key={i}>{Array.from({ length: 4 }).map((_, j) => <TableCell key={j}><Skeleton className="h-5" /></TableCell>)}</TableRow>
             ))}
             {!isLoading && visits?.length === 0 && (
-              <TableRow><TableCell colSpan={5}><EmptyState title="Посещений нет" description="Нажмите «Отметить посещение», чтобы добавить запись" /></TableCell></TableRow>
+              <TableRow><TableCell colSpan={4}><EmptyState title="Посещений нет" description="Нажмите «Отметить посещение», чтобы добавить запись" /></TableCell></TableRow>
             )}
             {visits?.map(v => (
               <TableRow key={v.id}>
@@ -124,9 +116,6 @@ export const VisitsPage = () => {
                   {v.client ? (
                     <Link to={`/clients/${v.clientId}`} className="hover:underline">{getFullName(v.client)}</Link>
                   ) : v.clientId}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {v.trainer ? getFullName(v.trainer) : 'Без тренера'}
                 </TableCell>
                 <TableCell className="text-muted-foreground italic text-sm">{v.notes || '—'}</TableCell>
                 {isAdmin() && (
@@ -158,17 +147,6 @@ export const VisitsPage = () => {
                 </SelectContent>
               </Select>
               {errors.clientId && <p className="text-xs text-destructive">{errors.clientId.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label>Тренер (необязательно)</Label>
-              <Select onValueChange={(v) => setValue('trainerId', v === 'none' ? '' : v)}>
-                <SelectTrigger><SelectValue placeholder="Без тренера" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Без тренера</SelectItem>
-                  {trainers?.map(t => <SelectItem key={t.id} value={t.id}>{getFullName(t)}</SelectItem>)}
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="space-y-2">
